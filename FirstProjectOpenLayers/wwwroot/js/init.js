@@ -40,24 +40,6 @@ function ActiveKapi() {
     kapi.setActive(true);
 }
 addKapiInteraction();
-const typeSelect = document.getElementById('type');
-let cizgi;
-function addLineInteraction() {
-    if (value !== 'none') {
-        cizgi = new ol.interaction.Draw({
-            source: source,
-            type: typeSelect.value,
-            freehand: true,
-        });
-    }
-    map.addLineInteraction(cizgi);
-
-}
-typeSelect.onchange = function () {
-    map.removeInteraction(cizgi);
-    addLineInteraction();
-};
-addLineInteraction();
 
 kapi.on('drawend', function (e) {
     //point atýldýktan sonra yapýlacak iþler bu scope de yer almalý

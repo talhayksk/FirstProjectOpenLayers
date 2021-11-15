@@ -30,13 +30,15 @@
                         </li>
                         <li class="nav-item">
                             @*<a class="nav-link text-dark" onclick="href="javascript:ActiveKapi();">Kapı Ekle</a>*@
-                            <button class="nav-link text-dark" style="border:0;border-radius:20px;padding:10px; margin-right:5px;" onclick="ActiveKapi();">Konum Ekle</button>
+                            <button class="nav-link text-dark" style="border:0;border-radius:20px;padding:10px; margin-right:5px;" onclick="ActiveDraw();">Konum Ekle</button>
                         </li>
                         <li>
                             <form class="form-inline">
                               
                                 <select id="type" class="nav-link text-dark" style="border-radius:5px; margin-right:5px;">
                                     <option value="LineString">LineString</option>
+                                    <option value="Point">Point</option>
+                                    
                                     <option value="Polygon">Polygon</option>
                                     <option value="Circle">Circle</option>
                                     <option value="None">None</option>
