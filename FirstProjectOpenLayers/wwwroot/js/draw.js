@@ -1,12 +1,20 @@
-﻿const raster = new ol.layer.Tile({
+﻿
+
+const raster = new ol.layer.Tile({
     source: new ol.source.OSM(),
 });
 const source = new ol.source.Vector({ wrapX: false });
 var vector = new ol.layer.Vector({
     //source: new ol.source.Vector(),
-    source: source
+    //source: source
+    source: new ol.source.Vector({
+        //url: 'D:/Calismalarim/FirstProjectOpenLayers/FirstProjectOpenLayers/Files/ILLER.kml',
+        url:'C:\Users\talha.yuksek\desktop\ILLER.kml',
+        url:'',
+        format: new ol.format.KML()
+    })
 });
-var etkilesim;
+
 var cizgi_layer = new ol.layer.Vector({
     source: new ol.source.Vector()
 });
@@ -14,7 +22,6 @@ const typeSelect = document.getElementById('type');
 
 let draw,snap; // global so we can remove it later
 function addInteraction() {
-   
     const value = typeSelect.value;
     if (value !== 'None') {
         draw = new ol.interaction.Draw({
@@ -29,10 +36,10 @@ function addInteraction() {
 
 
 const map = new ol.Map({
-    layers: [raster, vector, cizgi_layer],
+    layers: [raster, vector],
     target: 'map',
     view: new ol.View({
-        center: [42, 32],
+        center: [28.96, 41.03],
         zoom: 5,
     }),
 });

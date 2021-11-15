@@ -1,8 +1,10 @@
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+IWebHostEnvironment env = builder.Environment;
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -13,8 +15,21 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseHttpsRedirection();
+
+
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+            Path.Combine(env.ContentRootPath, "Files")),
+    RequestPath = "/Files",
+    ServeUnknownFileTypes = true,
+    DefaultContentType = "kml"
+});
+
 
 app.UseRouting();
 
