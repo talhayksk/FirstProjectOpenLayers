@@ -26,6 +26,7 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(
             Path.Combine(env.ContentRootPath, "Files")),
     RequestPath = "/Files",
+   // kml dosyasý  bu iki satýr eklenmesi gerekiyor çünki .net6 da bilinmeyen dosya türünene izin vermiyor !!
     ServeUnknownFileTypes = true,
     DefaultContentType = "kml"
 });
