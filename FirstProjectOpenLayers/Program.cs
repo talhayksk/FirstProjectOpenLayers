@@ -2,8 +2,14 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 var builder = WebApplication.CreateBuilder(args);
 
+#region Ýnjection
+#endregion
+
+
+
+
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews();// projenin mvc mimarisini kullanýcaðýný belirttik ve controller  ve views yapýsýný çaðýrdý.
 IWebHostEnvironment env = builder.Environment;
 var app = builder.Build();
 
@@ -15,13 +21,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseStaticFiles();
+app.UseStaticFiles();//wwwroot klasründeki dosyalara eriþilmesini saðlanýyor
 
 app.UseHttpsRedirection();
 
 
 
-app.UseStaticFiles(new StaticFileOptions
+app.UseStaticFiles(new StaticFileOptions //wwwroot klasörðü dýþýndaki dosylara eriþim saðlýyor
 {
     FileProvider = new PhysicalFileProvider(
             Path.Combine(env.ContentRootPath, "Files")),
@@ -32,7 +38,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 
-app.UseRouting();
+app.UseRouting();// burada gelen riquest e göre  nreye yönlendirmesi gerekiyorse o controllera yönlendiriliyor 
 
 app.UseAuthorization();
 
