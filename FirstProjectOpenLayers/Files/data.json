@@ -1,0 +1,99 @@
+{
+  "sehir": [
+    {
+      "id": "0",
+      "il": "Erzincan",
+      "tuikilkodu": "24"
+    },
+    {
+      "id": "1",
+      "il": "Yozgat",
+      "tuikilkodu": "66"
+    },
+    {
+      "id": "2",
+      "il": "Kırşehir",
+      "tuikilkodu": "40"
+    },
+    {
+      "id": "3",
+      "il": "Isparta",
+      "tuikilkodu": "32"
+    },
+    {
+      "id": "4",
+      "il": "Afyonkarahisar",
+      "tuikilkodu": "3"
+    },
+    {
+      "id": "5",
+      "il": "Erzincan",
+      "tuikilkodu": "24"
+    },
+    {
+      "id": "6",
+      "il": "Giresun",
+      "tuikilkodu": "28"
+    },
+    {
+      "id": "7",
+      "il": "Artvin",
+      "tuikilkodu": "8"
+    },
+    {
+      "id": "8",
+      "il": "Erzincan",
+      "tuikilkodu": "24"
+    },
+    {
+      "id": "9",
+      "il": "Erzincan",
+      "tuikilkodu": "24"
+    },
+    {
+      "id": "10",
+      "il": "Erzincan",
+      "tuikilkodu": "24"
+    },
+    {
+      "id": "11",
+      "il": "Kırşehir",
+      "tuikilkodu": "40"
+    },
+    {
+      "id": "12",
+      "il": "Kırşehir",
+      "tuikilkodu": "40"
+    },
+    {
+      "id": "13",
+      "il": "Sivas",
+      "tuikilkodu": "58"
+    },
+    {
+      "id": "14",
+      "il": "Tunceli",
+      "tuikilkodu": "62"
+    },
+    {
+      "id": "15",
+      "il": "Ankara",
+      "tuikilkodu": "6"
+    },
+    {
+      "id": "16",
+      "il": "Kastamonu",
+      "tuikilkodu": "37"
+    },
+    {
+      "id": "17",
+      "il": "Kütahya",
+      "tuikilkodu": "43"
+    },
+    {
+      "id": "18",
+      "il": "Eskişehir",
+      "tuikilkodu": "26"
+    }
+  ]
+}

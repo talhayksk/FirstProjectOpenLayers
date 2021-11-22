@@ -1,4 +1,4 @@
-var _panel;
+var _panel,_panelx;
 
 var raster = new ol.layer.Tile({
     source: new ol.source.OSM()
@@ -37,6 +37,7 @@ var json = [];
 var geometryK;
 const x = 0;
 const y = 0;
+var secilenler = [];
 var drawend = function (event) {
     var features = [kml_layer.getSource().getFeatures()];
     console.log(features);
@@ -63,108 +64,75 @@ var drawend = function (event) {
                 //source.addFeatures(points);
             }
         });
-        var secilenler = [];
+    
         $.each(kml_layer.getSource().getFeatures(), function (i, k) {
             var geojson2 = format.writeFeaturesObject([k]);
             geometryK = k.getGeometry();
             var intersects = turf.booleanIntersects(geojson1, geojson2);
-          // console.log(intersects)
+            // console.log(intersects)
             if (intersects == true) {
                 //var h = $('<textarea />').html(text).text();
-                console.log(k.values_.description);
+                // console.log(k.values_.description);
                 var plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(k.values_.description)[1];
                 //console.log(k);
                 //var el = $('<div>');
                 //el.html(k.get('description'));
                 //var text = $('li .atr-value', el).text;
                 //el.html('</div>')
-                secilenler.push({ id: k.getId(), name: k.get('name'), desc: plateNumber, obj: k })
+                secilenler.push({
+                    id: k.getId(), name: k.get('name'), extent: k, desc: plateNumber, obj: k, btn: `<input type='button' class="btn btn-warning" value='Detay' onclick="sehirDetay('` + k.getId() + `')" style='margin-right:5px;'></input>
+                                                                                                   <input type='button' class="btn btn-info" value='Bilgi AL' onclick="bilgiAl( '` + k.getId() + `','` + k.get('name') + `','` + plateNumber + `')"></input>`
+                })
 
             }
         })
         json = JSON.stringify(secilenler);
         /*      JSON.parse(json);*/
         var content = `
-<div class='toolbar'>
-  <button id='load' class='btn btn-secondary'>Load 10000 Rows</button>
-  <button id='append' class='btn btn-secondary'>Append 10000 Rows</button>
-  Total rows: <span id='total'></span>
-</div>
            <table id='table' width='100%'
             data-toolbar='.toolbar'
-            data-height='400'
+            data-height='500'
             data-virtual-scroll='true'
             data-show-columns='true'
+data-toggle="table"
                     >
              <thead>
                     <tr>
                          <th data-field='id'> id</th >
                          <th data-field='name'>name </th>
-                         <th data-field='desc'> desc</th>
-                         <th> islemler</th>
+                         <th data-field='desc'> tuik il kodu</th>
+                           <th data-field='btn'>islemler</th>
+                      
                     </tr>
              </thead>
-           </table>`;
-        var $table = $('#table')
-        var total = 0
-
-        function getData(number, isAppend) {
-            if (!isAppend) {
-                total = 0
-            }
-            var data = []
-            for (var i = total; i < total + number; i++) {
-                data.push({
-                    'id': secilenler[i].id,
-                    'name': secilenler[i].name,
-                    'desc': secilenler[i].desc
-                })
-            //    console.log("aasd"+data)
-            }
-            if (isAppend) {
-                total += number
-            } else {
-                total = number
-            }
-            $('#total').text(total)
-            return data
-        }
+           </table>
+`;
 
         $(function () {
-            console.log('Ne zaman');
-            console.log(secilenler);
             $('#table').bootstrapTable({ data: secilenler })
-
-            //$('#load').click(function () {
-            //    $table.bootstrapTable('load', getData(10000))
-            //})
-
-            //$('#append').click(function () {
-            //    $table.bootstrapTable('append', getData(10000, true))
-            //})
+        
         })
-        //$.each(json)
-    //    secilenler.forEach(item => {
-    //        content += ` <tr>
-    //                <td>`+ item.id + `</td>
-    //                <td>`+ item.name + `</td>
-    //                <td>`+ item.desc + `</td>
-    //                <td><button onclick='sehirDetay();' class='detay' type='sumbit'style="border:0;border-radius:10px;padding:5px; margin-right:5px;" >detay</button>
-    //                   <button class='bilgial'style="border:0;border-radius:10px;padding:5px; margin-right:5px;" type='sumbit' >bilgi Al</button>
-    //                </td>
-
-    //            </tr>`;
-    //    });
-    //    content += `</tbody>
-    //</table> `;
-    //    $(document).ready(function () {
-    //        $('table').DataTable();
-    //    });
+        function operateFormatter(value,row,index) {
+            
+            return [
+               `<button>sdf</button>`
+                //`<a class="like" href="javascript:void(0)" title="Like">`+
+                //`<i class="fa fa-heart"></i>`+
+                //`</a> `+
+                //`<a class="remove" href="javascript:void(0)" title="Remove">`+
+                //`<i class="fa fa-trash"></i>`+
+                //`</a>`
+            ].join('');
+     
+        }
+        //$(document).ready(function () {
+        //    $('table').DataTable();
+        //});
         _panel = jsPanel.create({
             id: "panel",
             theme: 'success',
             headerTitle: 'Secilen iller',
-            position: 'center-top 0 58',
+            position: 'center-top 10 58',
             panelSize: {
                 width: () => { return Math.min(900, window.innerWidth * 0.9); },
                 height: () => { return Math.min(600, window.innerHeight * 0.6); }
@@ -178,18 +146,84 @@ var drawend = function (event) {
     }
 };
 
-function sehirDetay() {
+function sehirDetay(idx) {
     //console.log(geometryK);
     //x = geometryK.getExtent()[0];
     //y = geometryK.getExtent()[3];
 
-    $('table tbody').on('click', 'tr', function (e) {
-        var id = $(this).find('td').text();
-        console.log(id)
+    //$('table tbody').on('click', 'tr', function (e) {
+    //    var id = $(this).find('td').text();
+    //    console.log(id)
 
-    })
-    const extent = geometryK.getExtent();
+    //})
+    console.log(idx);
+    console.log(secilenler);
+    var sehir = secilenler.find(x => x.id == idx);
+    console.log(sehir);
+    var extent = sehir.extent.getGeometry().getExtent();
     map.getView().fit(extent);
+}
+function bilgiAl(id, name, tuikKodu) {
+   // _panel.close()
+    console.log('fds' + id, name, tuikKodu);
+    const title = id;
+    console.log(title);
+    var cont = `<table>
+         <tr>
+         <td>iladi:</td>
+         <td><input id='il' type='text' value='`+ name +`'  / ></td>
+         </tr>
+         <tr>
+         <td>tuik il kodu:</td>
+         <td><input id='tuikkodu' value='`+ tuikKodu +`' type='text'  / ></td>
+         </tr>
+         <tr>
+         <td></td>
+         <td style='text-align:right'><button id='kopyala' class='btn btn-success' onclick="kaydet()" type='sumbit'>Kopyala</button></td>
+         </tr>
+         </table>`;
+    _panelx=  jsPanel.create({
+        id: "panelx",
+        theme: 'success',
+        headerTitle: title,
+        position: 'center-top 0 150',
+        width: 300,
+        height: 300,
+    
+        content: cont,
+        callback: function () {
+            this.content.style.padding = '20px';
+        }
+    });
+    $(function () {
+        document.getElementById('il').value =name;
+        document.getElementById('tuikkodu').value = tuikKodu;
+    })
+    //document.getElementById("il").value = "asda";
+    //document.getElementById("tuikkodu").value = tuikKodu
+}
+function kaydet() {
+  var il=  document.getElementById("il").value ;
+    var tuik = document.getElementById("tuikkodu").value;
+    var sehir = { id:'',il: il, tuikilkodu: tuik }
+$.ajax({
+    url: 'Home/SehirKaydet',
+    data: sehir,
+   // contentType: "application/json; charset=utf-8",
+    type: 'POST',
+    dataType: 'json',
+    success: function (data) {
+        Swal.fire({
+            position: 'top',
+            icon: 'success',
+            title: 'Kaydedildi!',
+            showConfirmButton: false,
+            timer: 1500
+        })
+        _panelx.close()
+     
+    }
+});
 }
 
 var draw; // global so we can remove it later

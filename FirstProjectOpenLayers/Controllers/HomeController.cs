@@ -1,5 +1,7 @@
 ﻿using FirstProjectOpenLayers.Models;
+using JsonFlatFileDataStore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting.Internal;
 using System.Diagnostics;
 
 namespace FirstProjectOpenLayers.Controllers
@@ -17,7 +19,21 @@ namespace FirstProjectOpenLayers.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public JsonResult SehirKaydet(sehir sehir)
+        {
+            //   string path = @HostingEnvironment.ApplicationPhysicalPath + "Files\\data.json";
 
+
+            //string filepath = Server.MapPath(Url.Content("~/Content/Xsl/"));
+            //filepath += "/Content/Xsl/pubmed.xslt";
+            var store = new DataStore("Files/data.json");
+            var ilCollection = store.GetCollection<sehir>();
+            ilCollection.InsertOne(sehir);
+
+            return Json(sehir);
+
+        }
         public IActionResult Privacy()
         {
             return View();
