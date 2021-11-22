@@ -33,20 +33,26 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
+                        <li class="nav-item m-1">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item m-1">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
+                            <li class="nav-item m-1">
+                            <button class="nav-link text-dark btn btn-light"  onclick="DosyaYukle()">KML Dosyası Yükle</button>
+                        </li>
+                        <li class="nav-item m-1">
                             @*<a class="nav-link text-dark" onclick="href="javascript:ActiveKapi();">Kapı Ekle</a>*@
-                            <button class="nav-link text-dark" style="border:0;border-radius:20px;padding:10px; margin-right:5px;" onclick="ActiveDraw();">Konum Ekle</button>
+                            <button class="nav-link text-dark btn btn-light"  onclick="ActiveDraw();">Konum Ekle</button>
+                        </li>
+                            <li class="nav-item m-1">
+                            <button class="nav-link text-dark btn btn-light" onclick="Listele();">Listele</button>
                         </li>
                         <li>
                             <form class="form-inline">
 
-                                <select id="type" class="nav-link text-dark" style="border-radius:5px; margin-right:5px;">
+                                <select id="type" class="nav-link text-dark " style="border-radius:5px; margin-right:5px;">
                                     <option value="LineString">LineString</option>
                                     <option value="Point">Point</option>
 
@@ -57,7 +63,7 @@
                             </form>
 
                         </li>
-
+                        
                     </ul>
                 </div>
             </div>

@@ -1,26 +1,80 @@
-var _panel,_panelx;
-
+var _panel,_panelx,_file='ILLER.KML',_map;
+var _layers = [];
 var raster = new ol.layer.Tile({
     source: new ol.source.OSM()
 });
+_layers[0] = raster;
+_layers[1] = vector;
+function DosyaYukle() {
+    (async () => {
+        const { value: file } = await Swal.fire({
+            title: 'Select Kml',
+            input: 'file',
+           
+            inputAttributes: {
+                'accept': 'KML/*',
+                'aria-label': 'Upload your Kml File',
+                 id: 'fileupload',
+            }
+        })
+        console.log(file);
+    
+        if (file) {
+         _file=file.name;
+            let formData = new FormData();
+            formData.append("file", file);
+            await fetch('Home/SaveFile/', {
+                method: "POST",
+                body: formData
+            });
+      
+          var layer=  new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    url: 'Files/' + _file,
+                    format: new ol.format.KML(),
+                    projection: 'EPSG:3857',
+                }),
+          })
+            _map.addLayer(layer);
+                
+            Swal.fire({
+                position: 'top',
+                icon: 'success',
+                title: 'Dosya Yuklendi!',
+                showConfirmButton: false,
+                timer: 1500
+            })
+ 
+        }
 
-var source = new ol.source.Vector({ wrapX: false });
-var xml = new XMLHttpRequest();
-var file = ('Files/ILLER.kml');
+    })()
+
+}
+
+
+var file = ('Files/' + _file);
 var kml_layer = new ol.layer.Vector({
     source: new ol.source.Vector({
         url: file,
         format: new ol.format.KML(),
         projection: 'EPSG:3857',
     }),
-});
+})
+var index = _layers.length;
+_layers[index + 1] = kml_layer;
+
+var source = new ol.source.Vector({ wrapX: false });
+var xml = new XMLHttpRequest();
+//var file = ('Files/ILLER.kml');
+
 
 var vector = new ol.layer.Vector({
     source: source
 });
 
-var map = new ol.Map({
-    layers: [raster, vector, kml_layer],
+_map = new ol.Map({
+     layers: [raster, vector, kml_layer],
+  //  layers: _layers[],
     target: 'map',
     view: new ol.View({
         center: [36.857143, 41.142857],
@@ -237,7 +291,7 @@ function addInteraction() {
             type: typeSelect.value
         });
         draw.on('drawend', drawend);
-        map.addInteraction(draw);
+        _map.addInteraction(draw);
 
     }
 }
@@ -249,7 +303,7 @@ function addInteraction() {
 typeSelect.onchange = function () {
 
 
-    map.removeInteraction(draw);
+    _map.removeInteraction(draw);
     addInteraction();
 };
 

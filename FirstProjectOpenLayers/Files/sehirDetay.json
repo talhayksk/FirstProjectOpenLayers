@@ -1,0 +1,36 @@
+{
+  "sehirDetay": [
+    {
+      "id": "1",
+      "tuikilkodu": "24",
+      "il": "Erzincan",
+      "nufus": "236.034",
+      "bolge": "Doğu Anadolu",
+      "merkezNoktasi": null
+    },
+    {
+      "id": "3",
+      "tuikilkodu": "24",
+      "il": "Erzincan",
+      "nufus": "236.034",
+      "bolge": "Doğu Anadolu",
+      "merkezNoktasi": null
+    },
+    {
+      "id": "4",
+      "tuikilkodu": "26",
+      "il": "Eskişehir",
+      "nufus": "871.187",
+      "bolge": "İç Anadolu",
+      "merkezNoktasi": null
+    },
+    {
+      "id": "5",
+      "tuikilkodu": "24",
+      "il": "Erzincan",
+      "nufus": "236.034",
+      "bolge": "Doğu Anadolu",
+      "merkezNoktasi": null
+    }
+  ]
+}
