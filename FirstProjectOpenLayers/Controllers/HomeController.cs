@@ -21,11 +21,11 @@ namespace FirstProjectOpenLayers.Controllers
             return View();
         }
         [HttpPost]
-        public JsonResult SehirKaydet(sehir sehir)
+        public JsonResult SehirKaydet(SehirDetay sehir)
         {
             
             var store = new DataStore("Files/data.json");
-            var ilCollection = store.GetCollection<sehir>();
+            var ilCollection = store.GetCollection<SehirDetay>();
             ilCollection.InsertOne(sehir);
 
             return Json(sehir);
@@ -33,20 +33,31 @@ namespace FirstProjectOpenLayers.Controllers
         }
         [HttpPost]
         public JsonResult SehirDetayKaydet(SehirDetay sehirDetay) {
-            var store = new DataStore("Files/sehirDetay.json");
-            var ilCollection = store.GetCollection<SehirDetay>();
-            ilCollection.InsertOne(sehirDetay);
+            //var store = new DataStore("Files/sehirDetay.json");
+            //var ilCollection = store.GetCollection<SehirDetay>();
+            //ilCollection.InsertOne(sehirDetay);
 
-            return Json(sehirDetay);
+
+            string path = ("Files/data.json");
+            var store = new DataStore(path);
+            var ilCollection = store.GetCollection<SehirDetay>();
+            var il = ilCollection.UpdateOne(x => x.tuikilkodu == sehirDetay.tuikilkodu,sehirDetay);
+            var illist = ilCollection.AsQueryable().ToList();
+
+
+            return Json(null);
         }
         [HttpDelete]
         public JsonResult SehirDetaySil(string id)
         {
-            string path = ("Files/sehirDetay.json");
+            string path = ("Files/data.json");
             var store = new DataStore(path);
             var ilCollection = store.GetCollection<SehirDetay>();
             var il = ilCollection.DeleteOne(x=>x.tuikilkodu==id);
             var illist = ilCollection.AsQueryable().ToList();
+            var stores = new DataStore("Files/Data.json");
+           var datailcoll = stores.GetCollection<sehir>();
+            var datail = datailcoll.DeleteOne(x=>x.tuikilkodu==id);
             return Json(illist);
 
         }
@@ -54,7 +65,7 @@ namespace FirstProjectOpenLayers.Controllers
         public JsonResult GetListe() {
             string path = ("Files/data.json");
             var store = new DataStore(path);
-            var ilCollection = store.GetCollection<sehir>();
+            var ilCollection = store.GetCollection<SehirDetay>();
             var il = ilCollection.AsQueryable().ToList();
             return Json(il);
         }
