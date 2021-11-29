@@ -1,10 +1,9 @@
-var _panel, _panelx, _file = 'ILLER.KML', _map,_activeLayer;
+var _panel, _panelx, _file = 'ILLER.KML', _map, _activeLayer;
 var _layers = [];
 var raster = new ol.layer.Tile({
     source: new ol.source.OSM()
 });
-_layers[0] = raster;
-_layers[1] = vector;
+
 function DosyaYukle() {
     (async () => {
         const { value: file } = await Swal.fire({
@@ -55,19 +54,16 @@ var kml_layer = new ol.layer.Vector({
     source: new ol.source.Vector({
         url: file,
         format: new ol.format.KML(),
-        projection: 'EPSG:3857',
+        projection: 'EPSG:4326',
     }),
 })
-var index = _layers.length;
-_layers[index + 1] = kml_layer;
-
 var source = new ol.source.Vector({ wrapX: false });
 var xml = new XMLHttpRequest();
 //var file = ('Files/ILLER.kml');
 
-
 var vector = new ol.layer.Vector({
     source: source
+
 });
 
 _map = new ol.Map({
@@ -83,21 +79,15 @@ _map = new ol.Map({
 
 _map.on('click', function (evt) {
     _map.forEachLayerAtPixel(evt.pixel, function (layer) {
-        console.log(evt.pixel);
-        console.log(layer);
-        _activeLayer = layer;
-        var id = layer.get('title');
-        console.log(id);
-        var title = layer.get('title');
-        console.log(title);
-        var whatever = layer.get('whatever');
-        console.log(whatever);
+
+        _activeLayer = _map.getLayers();
+
     });
 });
 var typeSelect = document.getElementById('type');
 var format = new ol.format.GeoJSON();
 //var format = new ol.format.KML();
-var json = [];
+var json = [], layers = [];
 var geometryK;
 const x = 0;
 const y = 0;
@@ -125,24 +115,32 @@ var drawend = function (event) {
             }
         });
         //
-        console.log(_activeLayer)
-        $.each(kml_layer.getSource().getFeatures(), function (i, k) {
-            var geojson2 = format.writeFeaturesObject([k]);
-            geometryK = k.getGeometry();
-            var intersects = turf.booleanIntersects(geojson1, geojson2);
-       
-            if (intersects == true) {
-                //var h = $('<textarea />').html(text).text();
-           
-                var plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(k.values_.description)[1];
-              
-                secilenler.push({
-                    id: k.getId(), name: k.get('name'), extent: k, desc: plateNumber, obj: k, btn: `<input type='button' class="btn btn-warning" value='Detay' onclick="sehirDetay('` + k.getId() + `')" style='margin-right:5px;'></input>
+        const layerCount = _map.getLayers().getArray().length;
+      //  for (var i = 0; i < layerCount; i++) {
+
+            //    _layers.push(_activeLayer.getArray()[i].getSource().getFeatures())
+            // console.log(_activeLayer)
+            // _activeLayer.getArray()[2].getSource().getFeatures()
+          //  if (i != 0) {
+                $.each(kml_layer.getSource().getFeatures(), function (i, k) {
+                    var geojson2 = format.writeFeaturesObject([k]);
+                    geometryK = k.getGeometry();
+                    var intersects = turf.booleanIntersects(geojson1, geojson2);
+
+                    if (intersects == true) {
+                        //var h = $('<textarea />').html(text).text();
+
+                        var plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(k.values_.description)[1];
+
+                        secilenler.push({
+                            id: k.getId(), name: k.get('name'), extent: k, desc: plateNumber, obj: k, btn: `<input type='button' class="btn btn-warning" value='Goster' onclick="sehirDetay('` + k.getId() + `')" style='margin-right:5px;'></input>
                                                                                                    <input type='button' class="btn btn-info" value='Bilgi AL' onclick="bilgiAl( '` + k.getId() + `','` + k.get('name') + `','` + plateNumber + `')"></input>`
+                        })
+
+                    }
                 })
-            
-            }
-        })
+           // }
+       // }
         json = JSON.stringify(secilenler);
         /*      JSON.parse(json);*/
         var content = `
@@ -185,7 +183,7 @@ data-toggle="table"
         });
     }
 };
-
+var illerjson = [];
 function sehirDetay(idx) {
     console.log(idx);
     console.log(secilenler);
@@ -193,6 +191,27 @@ function sehirDetay(idx) {
     console.log(sehir);
     var extent = sehir.extent.getGeometry().getExtent();
     _map.getView().fit(extent);
+}
+$(document).ready(function () {
+    $.ajax({
+        url: 'Files/ildetay.json',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $.each(data.data, function (i, item) {
+                illerjson.push(item)
+            });
+        }
+    });
+});
+function selectValue(value) {
+    var sehir = _liste.find(x => x.tuik == value);
+    var iljson = illerjson.find(x => x.plaka_kodu == sehir.tuik);
+    var tuik = document.getElementById("tuikilkodu").value = sehir.tuik;
+    var il = document.getElementById("il").value = sehir.il;
+    var nufus = document.getElementById("nufus").value = iljson.nufus;
+    var bolge = document.getElementById("bolge").value = iljson.bolge;
+    var nokta = document.getElementById("merkezNoktasi").value = sehir.nokta;
 }
 function bilgiAl(id, name, tuikKodu) {
     // _panel.close()
@@ -231,10 +250,35 @@ function bilgiAl(id, name, tuikKodu) {
         document.getElementById('tuikkodu').value = tuikKodu;
     })
 }
+var _wkt;
 function kaydet() {
-    var il = document.getElementById("il").value;
+    const wktfetures = kml_layer.getSource().getFeatures();
+    const wktformat = new ol.format.WKT();
     var tuik = document.getElementById("tuikkodu").value;
-    var sehir = { id: '', il: il, tuikilkodu: tuik }
+    $.each(wktfetures, function (index, data) {
+
+        var geo = data.getGeometry().getGeometries();
+        var plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(data.values_.description)[1];
+        if (plateNumber == tuik) {
+            for (let i = 0; i < geo.length; i++) {
+                if (geo[i].getType() == 'Polygon') {
+                    console.log(geo[i])
+                    _wkt = wktformat.writeGeometry(geo[i]);
+                }
+            }
+        }
+    })
+    var il = document.getElementById("il").value;
+
+    //----
+    var sehir = secilenler.find(x => x.desc == tuik);
+    var iljson = illerjson.find(x => x.plaka_kodu == sehir.desc);
+    var nufus = iljson.nufus;
+    var bolge = iljson.bolge;
+    var nokta = _wkt;//document.getElementById("merkezNoktasi").value = sehir.nokta;
+
+    //-----
+    var sehir = { id: '', il: il, tuikilkodu: tuik, bolge: bolge, nufus: nufus, merkezNoktasi: nokta }
     $.ajax({
         url: 'Home/SehirKaydet',
         data: sehir,
@@ -282,10 +326,10 @@ typeSelect.onchange = function () {
 addInteraction();
 
 let handler = function (event) {
-    
+
     let len = secilenler.length;
     secilenler.splice(0, len);
- 
+
 }
 
 document.addEventListener('jspanelclosed', handler, false);

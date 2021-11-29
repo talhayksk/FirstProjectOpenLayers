@@ -41,8 +41,16 @@ namespace FirstProjectOpenLayers.Controllers
             string path = ("Files/data.json");
             var store = new DataStore(path);
             var ilCollection = store.GetCollection<SehirDetay>();
-            var il = ilCollection.UpdateOne(x => x.tuikilkodu == sehirDetay.tuikilkodu,sehirDetay);
+            var kayit = ilCollection.AsQueryable().ToList().Where(p=>p.tuikilkodu==sehirDetay.tuikilkodu);
+            if (kayit == null)
+            {
+                ilCollection.InsertOne(sehirDetay);
+            }
+            else { 
+              var il = ilCollection.UpdateOne(x => x.tuikilkodu == sehirDetay.tuikilkodu,sehirDetay);
             var illist = ilCollection.AsQueryable().ToList();
+            }
+          
 
 
             return Json(null);

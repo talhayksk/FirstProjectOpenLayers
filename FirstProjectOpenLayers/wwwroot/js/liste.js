@@ -43,7 +43,7 @@ function Listele() {
 
             </tr>
                <tr>
-                <td>Merkez Noktası:</td>
+                <td>Wkt:</td>
                 <td><textarea id="merkezNoktasi" name="merkezNoktasi" rows="4" cols="50" class="form-control"></textarea>
 </td>
 
@@ -53,9 +53,10 @@ function Listele() {
 
 </div>
 <div class="text-right m-2">
-<input type='button' class="btn btn-primary" value='Merkez Nokta Bul' onclick="wktAl();" style='margin-right:5px;'></input>
+<input type='button' class="btn btn-primary" value='Goster' onclick="wktGoster();" style='margin-right:5px;'></input>
+<input type='button' class="btn btn-warning" value='Düzenle' onclick="wktDuzenle();" style='margin-right:5px;'></input>
 <input type='button' class="btn btn-danger" value='Sil' onclick="listSil();" style='margin-right:5px;'></input>
-<input type='summit' class="btn btn-success" value='Kaydet' onclick="ListKaydet();" style='margin-right:5px;'></input>
+<input type='button' class="btn btn-success" value='Kaydet' onclick="ListKaydet();" style='margin-right:5px;'></input>
 </div>
   </from>
 `;
@@ -90,6 +91,37 @@ function Listele() {
         }
     })
 }
+function wktDuzenle() {
+    const wkt = document.getElementById('merkezNoktasi').value;
+    const wktformat = new ol.format.WKT();
+    const wktfeature = wktformat.readFeature(wkt, {
+        dataprojection: 'epsg:4326',
+        featureprojection: 'epsg:4326',
+    });
+    const modify = ol.interaction.Modify({ source: vector2.getSource() });
+    _map.addInteraction(modify);
+    //snap = new Snap({ source: source });
+    //map.addInteraction(snap);
+    kml_layer.drawFeature(wktfeature);
+
+}
+function wktGoster() {
+    const wkt = document.getElementById('merkezNoktasi').value;
+    const wktformat = new ol.format.WKT();
+
+    const wktfeature = wktformat.readFeature(wkt, {
+        dataprojection: 'epsg:4326',
+        featureprojection: 'epsg:4326',
+    });
+
+    const vector2 = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: [wktfeature],
+        }),
+    });
+    _map.addLayer(vector2)
+    _panel.smallify();
+}
 function wktAl() {
     //  .getGeometries()
     const wktfetures = kml_layer.getSource().getFeatures();
@@ -102,14 +134,14 @@ function wktAl() {
         if (plateNumber == tuik) {
             for (let i = 0; i < geo.length; i++) {
                 if (geo[i].getType() == 'Polygon') {
-                  //  console.log(geo[i])
+                    console.log(geo[i])
                     _wkt = wktformat.writeGeometry(geo[i]);
                     //console.log(_wkt);
                 }
             }
         }
 
-        console.log(data.getGeometry().getGeometries())
+        //console.log(data.getGeometry().getGeometries())
 
     })
     var merkezNoktasi = document.getElementById('merkezNoktasi').value = _wkt;
@@ -152,8 +184,8 @@ function selectValue(value) {
     var iljson = illerjson.find(x => x.plaka_kodu == sehir.tuik);
     var tuik = document.getElementById("tuikilkodu").value = sehir.tuik;
     var il = document.getElementById("il").value = sehir.il;
-    var nufus = document.getElementById("nufus").value = iljson.nufus;
-    var bolge = document.getElementById("bolge").value = iljson.bolge;
+    var nufus = document.getElementById("nufus").value = sehir.nufus;
+    var bolge = document.getElementById("bolge").value = sehir.bolge;
     var nokta = document.getElementById("merkezNoktasi").value = sehir.nokta;
 }
 function ListKaydet() {
@@ -226,9 +258,7 @@ let cbhandler = function (event) {
 
 document.addEventListener('jspanelclosed', cbhandler, false);
 let loadhandler = function (event) {
-    _panel.getPanels(function () {
-        this.classList.contains('panel');
-    })
+   
 }
 
 // assign handler to event
