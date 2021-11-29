@@ -4,6 +4,7 @@ var raster = new ol.layer.Tile({
     source: new ol.source.OSM()
 });
 
+$("duzenlemeBitir").hide();
 function DosyaYukle() {
     (async () => {
         const { value: file } = await Swal.fire({
@@ -54,7 +55,7 @@ var kml_layer = new ol.layer.Vector({
     source: new ol.source.Vector({
         url: file,
         format: new ol.format.KML(),
-        projection: 'EPSG:4326',
+        projection: 'EPSG:3857',
     }),
 })
 var source = new ol.source.Vector({ wrapX: false });
@@ -70,10 +71,12 @@ _map = new ol.Map({
     layers: [raster, vector, kml_layer],
     target: 'map',
     view: new ol.View({
-        center: [36.857143, 41.142857],
+        //center: [36.857143, 41.142857],
+        center: ol.proj.fromLonLat([36.857143, 41.142857]),
+      
         //center: [0, 0],
         zoom: 6,
-        projection: "EPSG:4326",//"EPSG:3857",
+        projection: "EPSG:3857",//"EPSG:4326",
     })
 });
 
@@ -93,6 +96,7 @@ const x = 0;
 const y = 0;
 var secilenler = [];
 var drawend = function (event) {
+    draw.setActive(false)
     var features;// = [kml_layer.getSource().getFeatures()];
     features = [event.feature]
     console.log(features);
@@ -299,7 +303,8 @@ function kaydet() {
     });
 }
 
-var draw;
+var draw, snap;
+
 function addInteraction() {
     var value = typeSelect.value;
 
@@ -311,19 +316,26 @@ function addInteraction() {
         });
         draw.on('drawend', drawend);
         _map.addInteraction(draw);
-
+ 
+       //draw.setActive(false);
+     
     }
 }
-
-
-typeSelect.onchange = function () {
-
-
+var cizBtn = document.getElementById("cizBtn");
+cizBtn.onclick = function() {
+    draw.setActive(true)
+    _map.removeInteraction(snap);
     _map.removeInteraction(draw);
     addInteraction();
+
+}
+
+typeSelect.onchange = function () {
+  
 };
 
 addInteraction();
+draw.setActive(false);
 
 let handler = function (event) {
 

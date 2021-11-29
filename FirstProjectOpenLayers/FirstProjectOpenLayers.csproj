@@ -16,6 +16,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\extensions\contextmenu\jspanel.contextmenu.js" />
+    <None Include="wwwroot\js\extensions\contextmenu\jspanel.contextmenu.min.js" />
+    <None Include="wwwroot\js\extensions\datepicker\jspanel.datepicker.js" />
+    <None Include="wwwroot\js\extensions\datepicker\jspanel.datepicker.min.js" />
+    <None Include="wwwroot\js\extensions\dock\jspanel.dock.js" />
+    <None Include="wwwroot\js\extensions\dock\jspanel.dock.min.js" />
+    <None Include="wwwroot\js\extensions\hint\jspanel.hint.js" />
+    <None Include="wwwroot\js\extensions\hint\jspanel.hint.min.js" />
+    <None Include="wwwroot\js\extensions\layout\jspanel.layout.js" />
+    <None Include="wwwroot\js\extensions\layout\jspanel.layout.min.js" />
+    <None Include="wwwroot\js\extensions\modal\jspanel.modal.js" />
+    <None Include="wwwroot\js\extensions\modal\jspanel.modal.min.js" />
+    <None Include="wwwroot\js\extensions\tooltip\jspanel.tooltip.js" />
+    <None Include="wwwroot\js\extensions\tooltip\jspanel.tooltip.min.js" />
     <None Include="wwwroot\js\kml.js" />
     <None Include="wwwroot\js\init.js" />
   </ItemGroup>

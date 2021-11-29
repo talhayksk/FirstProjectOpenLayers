@@ -17,7 +17,7 @@ function Listele() {
                 });
             })
             var content = `
-   <select class="form-control" id="cbiller" name="cbiller" onchange="selectValue(this.value);" style="margin-bottom:20px;">
+   <select class="form-control " id="cbiller" name="cbiller" onchange="selectValue(this.value);" style="margin-bottom:20px;">
 <option value="sec">İl Seçiniz</option>
       </select>
         <form id="form">
@@ -91,19 +91,47 @@ function Listele() {
         }
     })
 }
+var snap,_source;
 function wktDuzenle() {
+    wktGoster()
     const wkt = document.getElementById('merkezNoktasi').value;
     const wktformat = new ol.format.WKT();
     const wktfeature = wktformat.readFeature(wkt, {
         dataprojection: 'epsg:4326',
-        featureprojection: 'epsg:4326',
+        featureprojection: 'epsg:3857',
     });
-    const modify = ol.interaction.Modify({ source: vector2.getSource() });
+    draw.setActive(false);
+    _panel.minimize();
+    const select =new ol.interaction.Select({
+        wrapX: false,
+    });
+    const modify = new ol.interaction.Modify({
+        source: _source,
+    });
     _map.addInteraction(modify);
-    //snap = new Snap({ source: source });
-    //map.addInteraction(snap);
-    kml_layer.drawFeature(wktfeature);
+    // _map.addInteraction(new ol.interaction().defaults.Extend([select, modify]));
 
+    snap = new ol.interaction.Snap({ source: _source });
+
+    _map.addInteraction(snap);
+  
+    $("#topMenuUl").append(`<li class='nav - item m - 1'>
+            <button class='nav-link text-light btn btn-warning' id ='duzenlemeBitir'  onclick = 'duzenlemeyiBitir();' >Düzenlemeyi Bitir</button >
+                        </li >`);
+  
+  //  kml_layer.drawFeature(wktfeature);ws
+}
+function duzenlemeyiBitir() {
+    const wktformat = new ol.format.WKT();
+    var geo = _source.getFeatures()[0].getGeometry();
+
+    _wkt = wktformat.writeGeometry(geo);
+    //alert(_wkt)
+    document.getElementById("merkezNoktasi").value = _wkt;
+    $("#duzenlemeBitir").hide(100);
+    $("#duzenlemeBitir").remove();
+
+    _panel.normalize();
 }
 function wktGoster() {
     const wkt = document.getElementById('merkezNoktasi').value;
@@ -119,6 +147,7 @@ function wktGoster() {
             features: [wktfeature],
         }),
     });
+    _source = vector2.getSource();
     _map.addLayer(vector2)
     _panel.smallify();
 }
@@ -148,8 +177,8 @@ function wktAl() {
     // _wkt = wktformat.writeGeometry(wktfetures[58].getGeometry());
 
     const wktfeature = wktformat.readFeature(_wkt, {
-        dataprojection: 'epsg:4326',
-        featureprojection: 'epsg:4326',
+        dataprojection: 'epsg:3857',
+        featureprojection: 'epsg:3857',
     });
 
     //const vector2 = new ol.layer.Vector({
@@ -187,6 +216,7 @@ function selectValue(value) {
     var nufus = document.getElementById("nufus").value = sehir.nufus;
     var bolge = document.getElementById("bolge").value = sehir.bolge;
     var nokta = document.getElementById("merkezNoktasi").value = sehir.nokta;
+    _panel.headerTitle = il;
 }
 function ListKaydet() {
     var tuik = document.getElementById("tuikilkodu").value;
