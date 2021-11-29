@@ -115,8 +115,8 @@ function wktDuzenle() {
 
     _map.addInteraction(snap);
   
-    $("#topMenuUl").append(`<li class='nav - item m - 1'>
-            <button class='nav-link text-light btn btn-warning' id ='duzenlemeBitir'  onclick = 'duzenlemeyiBitir();' >Düzenlemeyi Bitir</button >
+    $("#topMenuUl").append(`<li class="nav-item m-1">
+            <button class='nav-link text-dark btn btn-warning' id ='duzenlemeBitir'  onclick = 'duzenlemeyiBitir();' >Düzenlemeyi Bitir</button >
                         </li >`);
   
   //  kml_layer.drawFeature(wktfeature);ws
@@ -153,7 +153,7 @@ function wktGoster() {
 }
 function wktAl() {
     //  .getGeometries()
-    const wktfetures = kml_layer.getSource().getFeatures();
+    const wktfetures = _activeLayer.getSource().getFeatures();
     const wktformat = new ol.format.WKT();
     var tuik = document.getElementById("tuikilkodu").value;
     $.each(wktfetures, function (index, data) {

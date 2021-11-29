@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Files\ILLER.kml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\js\extensions\contextmenu\jspanel.contextmenu.js" />
     <None Include="wwwroot\js\extensions\contextmenu\jspanel.contextmenu.min.js" />
     <None Include="wwwroot\js\extensions\datepicker\jspanel.datepicker.js" />

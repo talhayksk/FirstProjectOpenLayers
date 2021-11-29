@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FirstProjectOpenLayers</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+ 
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/bootstrap-table.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/~/css/bootstrap-table.min.css" asp-append-version="true" />
-
-
-
-
-
+    <script src="~/js/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="~/css/sweetalert2.min.css" asp-append-version="true" />
      <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <link rel="stylesheet" href="~/FirstProjectOpenLayers.styles.css" asp-append-version="true" />
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.9.0/build/ol.js"></script>
@@ -22,23 +20,17 @@
         <script src="https://unpkg.com/elm-pep"></script>
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,URL,TextDecoder,Number.isInteger"></script>
-    @*<link href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css" rel="stylesheet">*@
+   
     <script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
-@*<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table-locale-all.min.js"></script>*@
+
     <script src="~/js/liste.js"></script>
-@*<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>*@
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="sweetalert2.all.min.js"></script>
-    @*<script>
-        var bbox = turf.bbox(features);
-        </script>*@
 
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FirstProjectOpenLayers</a>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" style="margin:0;">
+            <div class="container-fluid" style="padding:0; margin:0;">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OpenLayers</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -68,7 +60,7 @@
 
                         </li>
                         <li class="nav-item m-1">
-                            <button class="nav-link text-dark btn btn-light" id="cizBtn" onclick="ciz();">çiz</button>
+                            <button class="nav-link text-dark btn btn-light" id="cizBtn" >çiz</button>
                         </li>
                             
                         
@@ -83,50 +75,17 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2021 - FirstProjectOpenLayers - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
 
-
-    <!-- jsPanel CSS -->
-@*    <link href="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/jspanel.css" rel="stylesheet">
-    <!-- jsPanel JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/jspanel.js"></script>
-
-    <!-- optional jsPanel extensions -->
-    <script src="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/modal/jspanel.modal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/tooltip/jspanel.tooltip.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/hint/jspanel.hint.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/layout/jspanel.layout.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/contextmenu/jspanel.contextmenu.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspanel4@4.12.0/dist/extensions/dock/jspanel.dock.js"></script>*@
-
-        <!-- loading jsPanel javascript -->
-    <script src="dist/jspanel.js"></script>
+            <!-- loading jsPanel javascript -->
     <link rel="stylesheet" href="~/css/jspanel.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/jspanel.min.css" asp-append-version="true" />
-
-
+   
     <!-- optionally load jsPanel extensions -->
-    <script src="~/js/extensions/contextmenu/jspanel.contextmenu.js"></script>
-    <script src="~/js/extensions/hint/jspanel.hint.js"></script>
-    <script src="~/js/extensions/modal/jspanel.modal.js"></script>
-    <script src="~/js/extensions/tooltip/jspanel.tooltip.js"></script>
-    <script src="~/js/extensions/dock/jspanel.dock.js"></script>
     <script src="~/js/jspanel.js"></script>
 
 
 
     <!--bootstrap-table-->
-      <script src="~/js/bootstrap-table-locale-all.js"></script>
-      <script src="~/js/bootstrap-table-locale-all.min.js"></script>
-      <script src="~/js/bootstrap-table-vue.esm.js"></script>
-      <script src="~/js/bootstrap-table-vue.esm.min.js"></script>
-      <script src="~/js/bootstrap-table-vue.js"></script>
-      <script src="~/js/bootstrap-table-vue.min.js"></script>
       <script src="~/js/bootstrap-table.js"></script>
-      <script src="~/js/bootstrap-table.min.js"></script>
+ 
 </body>
 </html>

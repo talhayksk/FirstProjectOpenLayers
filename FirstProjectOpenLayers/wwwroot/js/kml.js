@@ -1,7 +1,10 @@
 var _panel, _panelx, _file = 'ILLER.KML', _map, _activeLayer;
 var _layers = [];
 var raster = new ol.layer.Tile({
-    source: new ol.source.OSM()
+    // source: new ol.source.OSM()
+    source: new ol.source.XYZ({
+        url: "http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+    })
 });
 
 $("duzenlemeBitir").hide();
@@ -18,7 +21,7 @@ function DosyaYukle() {
             }
         })
         console.log(file);
-
+        //todo kml kullanýcadan okunacak sunucuya atýlmayacak
         if (file) {
             _file = file.name;
             let formData = new FormData();
@@ -50,17 +53,15 @@ function DosyaYukle() {
     })()
 
 }
-var file = ('Files/' + _file);
-var kml_layer = new ol.layer.Vector({
-    source: new ol.source.Vector({
-        url: file,
-        format: new ol.format.KML(),
-        projection: 'EPSG:3857',
-    }),
-})
+//var file = ('Files/' + _file);
+//var kml_layer = new ol.layer.Vector({
+//    source: new ol.source.Vector({
+//        url: file,
+//        format: new ol.format.KML(),
+//        projection: 'EPSG:3857',
+//    }),
+//})
 var source = new ol.source.Vector({ wrapX: false });
-var xml = new XMLHttpRequest();
-//var file = ('Files/ILLER.kml');
 
 var vector = new ol.layer.Vector({
     source: source
@@ -68,7 +69,8 @@ var vector = new ol.layer.Vector({
 });
 
 _map = new ol.Map({
-    layers: [raster, vector, kml_layer],
+    // kml_layer
+    layers: [raster, vector],
     target: 'map',
     view: new ol.View({
         //center: [36.857143, 41.142857],
@@ -77,9 +79,14 @@ _map = new ol.Map({
         //center: [0, 0],
         zoom: 6,
         projection: "EPSG:3857",//"EPSG:4326",
-    })
-});
+    }),
+    controls : ol.control.defaults({
+        attribution : false,
+        zoom : false,
+    }),
 
+});
+//, { "maxZoom": 7 }
 _map.on('click', function (evt) {
     _map.forEachLayerAtPixel(evt.pixel, function (layer) {
 
@@ -120,21 +127,26 @@ var drawend = function (event) {
         });
         //
         const layerCount = _map.getLayers().getArray().length;
-      //  for (var i = 0; i < layerCount; i++) {
+      //  alert(layerCount)
+        for (var i = 0; i < layerCount; i++) {
 
-            //    _layers.push(_activeLayer.getArray()[i].getSource().getFeatures())
-            // console.log(_activeLayer)
-            // _activeLayer.getArray()[2].getSource().getFeatures()
-          //  if (i != 0) {
-                $.each(kml_layer.getSource().getFeatures(), function (i, k) {
+                //_layers.push(_activeLayer.getArray()[i].getSource().getFeatures())
+             console.log(_activeLayer)
+             //_activeLayer.getArray()[2].getSource().getFeatures()
+          if (i != 0 && i!=1) {
+        $.each(_activeLayer.getArray()[i].getSource().getFeatures(), function (i, k) {
                     var geojson2 = format.writeFeaturesObject([k]);
                     geometryK = k.getGeometry();
                     var intersects = turf.booleanIntersects(geojson1, geojson2);
-
+            var plateNumber;
                     if (intersects == true) {
                         //var h = $('<textarea />').html(text).text();
-
-                        var plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(k.values_.description)[1];
+                        try {
+                            plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(k.values_.description)[1];
+                        } catch (e) {
+                            plateNumber = "YOK";
+                        }
+            
 
                         secilenler.push({
                             id: k.getId(), name: k.get('name'), extent: k, desc: plateNumber, obj: k, btn: `<input type='button' class="btn btn-warning" value='Goster' onclick="sehirDetay('` + k.getId() + `')" style='margin-right:5px;'></input>
@@ -143,8 +155,8 @@ var drawend = function (event) {
 
                     }
                 })
-           // }
-       // }
+            }
+        }
         json = JSON.stringify(secilenler);
         /*      JSON.parse(json);*/
         var content = `
@@ -249,6 +261,9 @@ function bilgiAl(id, name, tuikKodu) {
             this.content.style.padding = '20px';
         }
     });
+
+
+
     $(function () {
         document.getElementById('il').value = name;
         document.getElementById('tuikkodu').value = tuikKodu;
@@ -321,6 +336,7 @@ function addInteraction() {
      
     }
 }
+
 var cizBtn = document.getElementById("cizBtn");
 cizBtn.onclick = function() {
     draw.setActive(true)
