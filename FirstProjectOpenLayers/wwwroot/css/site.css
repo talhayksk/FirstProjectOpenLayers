@@ -15,4 +15,12 @@ html {
 
 body {
   margin-bottom: 60px;
+  overflow:hidden;
+}
+#map {
+    width: 100%;
+    height: 920px;
+}
+.listebutton {
+    margin-right: 5px;
 }

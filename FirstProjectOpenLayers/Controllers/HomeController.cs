@@ -115,6 +115,7 @@ namespace FirstProjectOpenLayers.Controllers
         [HttpPost]
         public JsonResult SavePoint(Kapi kapi, double x, double y, string no)
         {
+
             if (ModelState.IsValid)
             {
                 kapi.KapiNo = no;

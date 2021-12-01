@@ -1,14 +1,12 @@
 var _panel, _panelx, _file = 'ILLER.KML', _map, _activeLayer;
 var _layers = [];
 var raster = new ol.layer.Tile({
-    // source: new ol.source.OSM()
     source: new ol.source.XYZ({
         url: "http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
     })
 });
+$('#kmlYukle').on('click', function () {
 
-$("duzenlemeBitir").hide();
-function DosyaYukle() {
     (async () => {
         const { value: file } = await Swal.fire({
             title: 'Select Kml',
@@ -38,7 +36,9 @@ function DosyaYukle() {
                     projection: 'EPSG:3857',
                 }),
             })
+
             _map.addLayer(layer);
+            _activeLayer = _map.getLayers();
 
             Swal.fire({
                 position: 'top',
@@ -52,20 +52,12 @@ function DosyaYukle() {
 
     })()
 
-}
-//var file = ('Files/' + _file);
-//var kml_layer = new ol.layer.Vector({
-//    source: new ol.source.Vector({
-//        url: file,
-//        format: new ol.format.KML(),
-//        projection: 'EPSG:3857',
-//    }),
-//})
+
+})
 var source = new ol.source.Vector({ wrapX: false });
 
 var vector = new ol.layer.Vector({
     source: source
-
 });
 
 _map = new ol.Map({
@@ -73,72 +65,73 @@ _map = new ol.Map({
     layers: [raster, vector],
     target: 'map',
     view: new ol.View({
-        //center: [36.857143, 41.142857],
         center: ol.proj.fromLonLat([36.857143, 41.142857]),
-      
-        //center: [0, 0],
         zoom: 6,
         projection: "EPSG:3857",//"EPSG:4326",
     }),
-    controls : ol.control.defaults({
-        attribution : false,
-        zoom : false,
+    controls: ol.control.defaults({
+        attribution: false,
+        zoom: false,
     }),
+    interactions: ol.interaction.defaults({ doubleClickZoom: false }),
 
 });
-//, { "maxZoom": 7 }
+
+var extent = [2787835.089390983, 4145543.4083158798, 5087060.900209085, 5258466.540148046];
+_map.getView().fit(extent, _map.getSize());
+
 _map.on('click', function (evt) {
     _map.forEachLayerAtPixel(evt.pixel, function (layer) {
-
         _activeLayer = _map.getLayers();
-
     });
 });
-var typeSelect = document.getElementById('type');
+
+
+
+
 var format = new ol.format.GeoJSON();
-//var format = new ol.format.KML();
 var json = [], layers = [];
 var geometryK;
 const x = 0;
 const y = 0;
 var secilenler = [];
+
+
 var drawend = function (event) {
-    draw.setActive(false)
+
+    //draw.setActive(false)
     var features;// = [kml_layer.getSource().getFeatures()];
     features = [event.feature]
-    console.log(features);
+
     //  var features = kml_layer.features;
     var geometry = event.feature.getGeometry();
     var type = geometry.getType();
+
     if (type === "LineString" || type === "Polygon" || type === "Circle" || type === "Point") {
         var geojson1 = format.writeFeaturesObject([event.feature]);
+
         var extent = geometry.getExtent();
-        console.log(extent);
-        // features.forEach((item) => console.log(item.get("geometry").getExtent()))
+
         source.forEachFeatureIntersectingExtent(extent, function (feature) {
             var geometry = feature.getGeometry();
             var type = geometry.getType();
             if (type === "LineString" || type === "Polygon" || type === "Circle" || type === "Point") {
-                /* var geojson2 = format.writeFeaturesObject([feature]);*/
-                //var intersects = turf.lineIntersect(geojson1, geojson2);
-                //var points = format.readFeatures(intersects);
-                //source.addFeatures(points);
+
             }
         });
-        //
+
         const layerCount = _map.getLayers().getArray().length;
-      //  alert(layerCount)
         for (var i = 0; i < layerCount; i++) {
 
-                //_layers.push(_activeLayer.getArray()[i].getSource().getFeatures())
-             console.log(_activeLayer)
-             //_activeLayer.getArray()[2].getSource().getFeatures()
-          if (i != 0 && i!=1) {
-        $.each(_activeLayer.getArray()[i].getSource().getFeatures(), function (i, k) {
+            if (i != 0 && i != 1) {
+                var feat = _activeLayer.getArray()[i].getSource().getFeatures();
+                $.each(feat, function (i, k) {
                     var geojson2 = format.writeFeaturesObject([k]);
                     geometryK = k.getGeometry();
+
                     var intersects = turf.booleanIntersects(geojson1, geojson2);
-            var plateNumber;
+
+                    var plateNumber;
                     if (intersects == true) {
                         //var h = $('<textarea />').html(text).text();
                         try {
@@ -146,8 +139,6 @@ var drawend = function (event) {
                         } catch (e) {
                             plateNumber = "YOK";
                         }
-            
-
                         secilenler.push({
                             id: k.getId(), name: k.get('name'), extent: k, desc: plateNumber, obj: k, btn: `<input type='button' class="btn btn-warning" value='Goster' onclick="sehirDetay('` + k.getId() + `')" style='margin-right:5px;'></input>
                                                                                                    <input type='button' class="btn btn-info" value='Bilgi AL' onclick="bilgiAl( '` + k.getId() + `','` + k.get('name') + `','` + plateNumber + `')"></input>`
@@ -157,31 +148,11 @@ var drawend = function (event) {
                 })
             }
         }
-        json = JSON.stringify(secilenler);
-        /*      JSON.parse(json);*/
-        var content = `
-<label><b>Toplam:`+ secilenler.length + `</b></label>
-           <table id='table' width='100%'
-            data-toolbar='.toolbar'
-            data-height='480'
-            data-virtual-scroll='true'
-      
-data-toggle="table"
-                    >
-             <thead>
-                    <tr>
-                         <th data-field='id'> Id</th >
-                         <th data-field='name'>Il </th>
-                         <th data-field='desc'> Tuik Il Kodu</th>
-                           <th data-field='btn'>Islemler</th>
-                      
-                    </tr>
-             </thead>
-           </table>
 
-`;
+
         $(function () {
-            $('#table').bootstrapTable({ data: secilenler })
+            $('#table').bootstrapTable({ data: secilenler, locale: 'tr', pagination: true })
+
         })
         _panel = jsPanel.create({
             id: "panel",
@@ -192,19 +163,41 @@ data-toggle="table"
                 width: () => { return Math.min(900, window.innerWidth * 0.9); },
                 height: () => { return Math.min(600, window.innerHeight * 0.6); }
             },
-            content: content,
+            contentAjax: {
+                url: 'Files/secilenler.html',
+                done: (xhr, panel) => {
+                    _panel.content.innerHTML = xhr.responseText;
+                }
+            },
+            position: 'center 50 50',
+
             callback: function () {
                 this.content.style.padding = '20px';
             }
         });
+        switch (typeSelect) {
+            case "Point":
+                _drawPoint.setActive(false);
+                break;
+            case "LineString":
+                _drawLine.setActive(false);
+                break;
+            case "Circle":
+                _drawCircle.setActive(false);
+                break;
+            case "Polygon":
+                _drawPolygon.setActive(false);
+                break;
+            default:
+            // code block
+        }
     }
+
+
 };
-var illerjson = [];
+var illerDetayListJson = [];
 function sehirDetay(idx) {
-    console.log(idx);
-    console.log(secilenler);
     var sehir = secilenler.find(x => x.id == idx);
-    console.log(sehir);
     var extent = sehir.extent.getGeometry().getExtent();
     _map.getView().fit(extent);
 }
@@ -215,14 +208,14 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (data) {
             $.each(data.data, function (i, item) {
-                illerjson.push(item)
+                illerDetayListJson.push(item)
             });
         }
     });
 });
 function selectValue(value) {
     var sehir = _liste.find(x => x.tuik == value);
-    var iljson = illerjson.find(x => x.plaka_kodu == sehir.tuik);
+    var iljson = illerDetayListJson.find(x => x.plaka_kodu == sehir.tuik);
     var tuik = document.getElementById("tuikilkodu").value = sehir.tuik;
     var il = document.getElementById("il").value = sehir.il;
     var nufus = document.getElementById("nufus").value = iljson.nufus;
@@ -230,72 +223,59 @@ function selectValue(value) {
     var nokta = document.getElementById("merkezNoktasi").value = sehir.nokta;
 }
 function bilgiAl(id, name, tuikKodu) {
-    // _panel.close()
-    console.log('fds' + id, name, tuikKodu);
-    const title = id;
-    console.log(title);
-    var cont = `<table>
-         <tr>
-         <td>Il:</td>
-         <td><input id='il' type='text' class="form-control" value='`+ name + `'  / ></td>
-         </tr>
-         <tr>
-         <td>Tuik Il Kodu:</td>
-         <td><input id='tuikkodu' class="form-control" value='`+ tuikKodu + `' type='text'  / ></td>
-         </tr>
-         <tr>
-         <td></td>
-         <td style='text-align:right'><button id='kopyala' class='btn btn-success' onclick="kaydet()" type='sumbit'>Kopyala</button></td>
-         </tr>
-         </table>`;
+   // console.log(title);
     _panelx = jsPanel.create({
         id: "panelx",
         theme: 'success',
-        headerTitle: title,
+        headerTitle: id,
         position: 'center-top 0 150',
         width: 300,
         height: 300,
-
-        content: cont,
+        contentAjax: {
+            url: 'Files/SehirBilgi.html',
+            done: (xhr, panel) => {
+                _panelx.content.innerHTML = xhr.responseText;
+                document.getElementById('il').value = name;
+                document.getElementById('tuikkodu').value = tuikKodu;
+            }
+        },
         callback: function () {
             this.content.style.padding = '20px';
         }
     });
-
-
-
-    $(function () {
-        document.getElementById('il').value = name;
-        document.getElementById('tuikkodu').value = tuikKodu;
-    })
 }
 var _wkt;
-function kaydet() {
-    const wktfetures = kml_layer.getSource().getFeatures();
-    const wktformat = new ol.format.WKT();
-    var tuik = document.getElementById("tuikkodu").value;
-    $.each(wktfetures, function (index, data) {
 
-        var geo = data.getGeometry().getGeometries();
-        var plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(data.values_.description)[1];
-        if (plateNumber == tuik) {
-            for (let i = 0; i < geo.length; i++) {
-                if (geo[i].getType() == 'Polygon') {
-                    console.log(geo[i])
-                    _wkt = wktformat.writeGeometry(geo[i]);
-                }
+function kaydet() {
+    var tuik = document.getElementById("tuikkodu").value;
+    var sehir = secilenler.find(x => x.desc == tuik);
+    var wktfetures = sehir.obj;
+
+    const wktformat = new ol.format.WKT();
+
+
+    var plateNumber;
+    var geo = wktfetures.getGeometry();
+    try {
+        plateNumber = tuik;
+    } catch (e) {
+        plateNumber = "Yok"
+    }
+    if (plateNumber == tuik) {
+        var count = geo.getGeometries();
+        for (let i = 0; i < count.length; i++) {
+            if (geo.getGeometries()[i].getType() == 'Polygon') {
+                console.log(geo.getGeometries()[i])
+                _wkt = wktformat.writeGeometry(geo.getGeometries()[i]);
             }
         }
-    })
+    }
     var il = document.getElementById("il").value;
-
     //----
-    var sehir = secilenler.find(x => x.desc == tuik);
-    var iljson = illerjson.find(x => x.plaka_kodu == sehir.desc);
+    var iljson = illerDetayListJson.find(x => x.plaka_kodu == tuik);
     var nufus = iljson.nufus;
     var bolge = iljson.bolge;
     var nokta = _wkt;//document.getElementById("merkezNoktasi").value = sehir.nokta;
-
     //-----
     var sehir = { id: '', il: il, tuikilkodu: tuik, bolge: bolge, nufus: nufus, merkezNoktasi: nokta }
     $.ajax({
@@ -313,46 +293,74 @@ function kaydet() {
                 timer: 1500
             })
             _panelx.close()
-
         }
     });
 }
 
 var draw, snap;
+var _drawLine, _drawPoint, _drawCircle, _drawPolygon;
+$('#type').on('change', function () {
+    
+    typeSelect = $('#type').val();
+
+    _drawPoint.setActive(false);
+    _drawLine.setActive(false);
+    _drawCircle.setActive(false);
+    _drawPolygon.setActive(false);
+   // addInteraction();
+})
+var typeSelect = $('#type').val();
 
 function addInteraction() {
-    var value = typeSelect.value;
+    if (typeSelect !== 'None') {
+        if (typeSelect == 'Point') {
+            _drawPoint = new ol.interaction.Draw({
+                source: source,
+                type: typeSelect
+            });
+            _drawPoint.setActive(true)
 
+            _drawPoint.on('drawend', drawend);
+            _map.addInteraction(_drawPoint);
+        }
+        if (typeSelect === "LineString") {
+            _drawLine = new ol.interaction.Draw({
+                source: source,
+                type: typeSelect
+            });
+            _drawLine.setActive(true)
 
-    if (value !== 'None') {
-        draw = new ol.interaction.Draw({
-            source: source,
-            type: typeSelect.value
-        });
-        draw.on('drawend', drawend);
-        _map.addInteraction(draw);
+            _drawLine.on('drawend', drawend);
+            _map.addInteraction(_drawLine);
+        }
+        if (typeSelect === "Circle") {
+            _drawCircle = new ol.interaction.Draw({
+                source: source,
+                type: typeSelect
+            });
+            _drawCircle.setActive(true)
+
+            _drawCircle.on('drawend', drawend);
+            _map.addInteraction(_drawCircle);
+        }
+        if (typeSelect === "Polygon") {
+            _drawPolygon = new ol.interaction.Draw({
+                source: source,
+                type: typeSelect
+            });
+            _drawPolygon.setActive(true)
+
+            _drawPolygon.on('drawend', drawend);
+            _map.addInteraction(_drawPolygon);
+
+        }
  
-       //draw.setActive(false);
-     
     }
 }
-
 var cizBtn = document.getElementById("cizBtn");
-cizBtn.onclick = function() {
-    draw.setActive(true)
-    _map.removeInteraction(snap);
-    _map.removeInteraction(draw);
-    addInteraction();
-
-}
-
-typeSelect.onchange = function () {
-  
-};
-
-addInteraction();
-draw.setActive(false);
-
+$('#cizBtn').on('click', function () {
+      addInteraction();
+});
 let handler = function (event) {
 
     let len = secilenler.length;

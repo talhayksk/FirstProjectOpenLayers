@@ -28,6 +28,9 @@
     <None Include="wwwroot\js\extensions\tooltip\jspanel.tooltip.min.js" />
     <None Include="wwwroot\js\kml.js" />
     <None Include="wwwroot\js\init.js" />
+    <None Include="wwwroot\js\OL\ol.css.map" />
+    <None Include="wwwroot\js\OL\ol.js" />
+    <None Include="wwwroot\js\OL\ol.js.map" />
   </ItemGroup>
 
   <ItemGroup>

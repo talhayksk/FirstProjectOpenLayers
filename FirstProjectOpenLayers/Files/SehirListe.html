@@ -1,0 +1,47 @@
+﻿
+
+
+<select class="form-control " id="cbiller" name="cbiller" style="margin-bottom:20px;">
+    <option value="sec">İl Seçiniz</option>
+</select>
+<form id="form">
+    <table class="form-group">
+        <tr>
+            <td>Tuik İl Kodu:</td>
+            <td><input type="text" id="tuikilkodu" name="tuikilkodu" class="form-control" /></td>
+
+        </tr>
+        <tr>
+            <td>İl:</td>
+            <td><input type="text" id="il" name="il" class="form-control" /></td>
+
+        </tr>
+        <tr>
+            <td>Nüfus:</td>
+            <td><input type="text" id="nufus" name="nufus" class="form-control" /></td>
+
+        </tr>
+        <tr>
+            <td>İl Bölgesi:</td>
+            <td><input type="text" id="bolge" name="bolge" class="form-control" /></td>
+
+        </tr>
+        <tr>
+            <td>Wkt:</td>
+            <td>
+                <textarea id="merkezNoktasi" name="merkezNoktasi" rows="4" cols="50" class="form-control"></textarea>
+            </td>
+
+        </tr>
+    </table>
+
+
+
+    <div class="text-right m-2 align-items-end">
+        <button id="wktTemizle" type='button' class="btn btn-light listebutton">Wkt Temizle</button>
+        <button id="wktGoster" type='button' class="btn btn-primary listebutton">Göster</button>
+        <button id="wktDuzenle" type='button' class="btn btn-warning listebutton">Düzenle</button>
+        <button id="wktSil" type='button' class="btn btn-danger listebutton" style='margin-right:5px;'>Sil</button>
+        <button id="wktKaydet" type='button' class="btn btn-success listebutton" style='margin-right:5px;'>Kaydet</button>
+    </div>
+</form>

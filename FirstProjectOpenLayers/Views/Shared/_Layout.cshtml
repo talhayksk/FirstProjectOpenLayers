@@ -4,88 +4,75 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FirstProjectOpenLayers</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
- 
 
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/bootstrap-table.css" asp-append-version="true" />
-    <script src="~/js/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="~/css/sweetalert2.min.css" asp-append-version="true" />
-     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <link rel="stylesheet" href="~/FirstProjectOpenLayers.styles.css" asp-append-version="true" />
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.9.0/build/ol.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.9.0/css/ol.css">
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
-    <script src='https://unpkg.com/@@turf/turf@6/turf.min.js'></script>
-        <script src="https://unpkg.com/elm-pep"></script>
-    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
-    <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=fetch,requestAnimationFrame,Element.prototype.classList,URL,TextDecoder,Number.isInteger"></script>
-   
-    <script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/js/OL/ol.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/jspanel.css" asp-append-version="true" />
 
-    <script src="~/js/liste.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src='~/js/OL/ol.js'></script>
+    <script src='~/js/turf/turf.min.js'></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/bootstrap-table.js"></script>
+    <script src="~/js/bootstrap-table-tr-TR.min.js"></script>
+    <script src="~/js/jspanel.js"></script>
+    <script src="~/js/sweetalert2.min.js"></script>
+
+
 
 </head>
-<body>
+<body >
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" style="margin:0;">
-            <div class="container-fluid" style="padding:0; margin:0;">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OpenLayers</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1" id="topMenuUl">
-                    
-                            <li class="nav-item m-1">
-                            <button class="nav-link text-dark btn btn-light"  onclick="DosyaYukle()">KML Yükle</button>
-                        </li>
-                    
-                            <li class="nav-item m-1">
-                            <button class="nav-link text-dark btn btn-light" onclick="Listele();">Listele</button>
-                        </li>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow ">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OpenLayers</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="true" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto" id="topMenuUl">
 
-                        <li class="nav-item m-1">
-                            <form class="">
+                    <li class="nav-item m-1">
+                        <button id="kmlYukle" class="nav-link text-dark btn btn-light">KML Yükle</button>
+                    </li>
 
-                                <select id="type" class="nav-link text-dark btn btn-light" >
-                                    <option value="LineString">LineString</option>
-                                    <option value="Point">Point</option>
-                                    <option value="Polygon">Polygon</option>
-                                    <option value="Circle">Circle</option>
-                                    <option value="None">None</option>
-                                </select>
-                            </form>
+                    <li class="nav-item m-1">
+                        <button id="listele" class="nav-link text-dark btn btn-light">Listele</button>
+                    </li>
 
-                        </li>
-                        <li class="nav-item m-1">
-                            <button class="nav-link text-dark btn btn-light" id="cizBtn" >çiz</button>
-                        </li>
-                            
-                        
-                    </ul>
-                </div>
+                    <li class="nav-item m-1">
+                        <form class="">
+                            <select id="type" class="nav-link text-dark btn btn-light">
+                                <option value="LineString">LineString</option>
+                                <option value="Point">Point</option>
+                                <option value="Polygon">Polygon</option>
+                                <option value="Circle">Circle</option>
+                                <option value="None">None</option>
+                            </select>
+                        </form>
+
+                    </li>
+                    <li class="nav-item m-1">
+                        <button class="nav-link text-dark btn btn-light" id="cizBtn">çiz</button>
+                    </li>
+
+
+                </ul>
             </div>
+
         </nav>
     </header>
-    <div class="container-fluid">
+    <div class="" style="overflow: hidden;">
         <main role="main" class="pb-6">
             @RenderBody()
         </main>
     </div>
+            <script src="~/js/Interaction.js"></script>
+        <script src="~/js/kml.js"></script>
 
+    <script src="~/js/liste.js"></script>
 
-            <!-- loading jsPanel javascript -->
-    <link rel="stylesheet" href="~/css/jspanel.css" asp-append-version="true" />
-   
-    <!-- optionally load jsPanel extensions -->
-    <script src="~/js/jspanel.js"></script>
-
-
-
-    <!--bootstrap-table-->
-      <script src="~/js/bootstrap-table.js"></script>
- 
 </body>
 </html>
