@@ -4,6 +4,9 @@ var illerList = [];
 var _wkt;
 var cityOptions = [];
 $('#listele').on('click', function () {
+    Listele();
+})
+function Listele() {
     $("#cbiller").empty();
     $.ajax({
         url: 'Home/GetListe',
@@ -25,13 +28,31 @@ $('#listele').on('click', function () {
                     //  console.log(item);
                     //optn.text = item.il;
                     //optn.value = item.tuik;
-                    console.log(item);
                     cityOptions.push({ text: item.il, value: item.tuik });
                     //drp.options.add(new Option(optn.text, optn.value));
                 })
-
             })
+            $(function () {
+                var drp = document.getElementById("cbiller");
+                _liste.forEach(x => {
+                    var optn = document.createElement("OPTION");
+                    optn.text = x.il;
+                    optn.value = x.tuik;
+                    drp.options.add(new Option(optn.text, optn.value));
+                });
 
+                $('#cbiller').on('change', function (event) {
+                    var sehir = _liste.find(x => x.tuik == event.target.value);
+
+                    // illerList.find(x => x.plaka_kodu == sehir.tuik);
+                    document.getElementById("tuikilkodu").value = sehir.tuik;
+                    var il = document.getElementById("il").value = sehir.il;
+                    document.getElementById("nufus").value = sehir.nufus;
+                    document.getElementById("bolge").value = sehir.bolge;
+                    document.getElementById("merkezNoktasi").value = sehir.nokta;
+                    _panel.headerTitle = il;
+                })
+            })
             var id = $('#cbiller').val();
 
             _panel = jsPanel.create({
@@ -54,12 +75,22 @@ $('#listele').on('click', function () {
                     this.content.style.padding = '20px';
                 }
             });
+            $(document).ready(function () {
+
+                $("#wktGoster").click(function () { wktGoster(); });
+                $('#wktSil').click(function () { wktSil(); });
+                $('#wktKaydet').click(function () { wktKaydet(); });
+                $('#wktTemizle').click(function () { wktTemizle(); });
+                $('#wktDuzenle').click(function () { wktDuzenle(); });
+
+            });
+
         }
     })
-})
 
+}
 var snap, _source;
-$('#wktDuzenle').on('click', function () {
+function wktDuzenle() {
     wktGoster()
     const wkt = document.getElementById('merkezNoktasi').value;
     const wktformat = new ol.format.WKT();
@@ -67,24 +98,18 @@ $('#wktDuzenle').on('click', function () {
         dataprojection: 'epsg:4326',
         featureprojection: 'epsg:3857',
     });
-    draw.setActive(false);
+
     _panel.minimize();
     const modify = new ol.interaction.Modify({
         source: _source,
     });
     _map.addInteraction(modify);
-    // _map.addInteraction(new ol.interaction().defaults.Extend([select, modify]));
-
     snap = new ol.interaction.Snap({ source: _source });
-
     _map.addInteraction(snap);
-
     $("#topMenuUl").append(`<li class="nav-item m-1">
             <button class='nav-link text-dark btn btn-warning' id ='duzenlemeBitir'  onclick = 'duzenlemeyiBitir();' >Düzenlemeyi Bitir</button >
                         </li >`);
-
-
-})
+}
 
 function duzenlemeyiBitir() {
     const wktformat = new ol.format.WKT();
@@ -99,15 +124,14 @@ function duzenlemeyiBitir() {
     _panel.normalize();
 }
 var _vector2;
-$('#wktGoster').on('click', function () {
+ function wktGoster() {
+
     const wkt = document.getElementById('merkezNoktasi').value;
     const wktformat = new ol.format.WKT();
-
     const wktfeature = wktformat.readFeature(wkt, {
         dataprojection: 'epsg:4326',
         featureprojection: 'epsg:4326',
     });
-
     const vector2 = new ol.layer.Vector({
         source: new ol.source.Vector({
             features: [wktfeature],
@@ -117,7 +141,7 @@ $('#wktGoster').on('click', function () {
     _source = vector2.getSource();
     _map.addLayer(vector2)
     _panel.smallify();
-})
+};
 
 function wktAl() {
     //  .getGeometries()
@@ -164,18 +188,7 @@ function wktAl() {
     })
 
 }
-    $(document).ready(function () {
-        $.ajax({
-            url: 'Files/ildetay.json',
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                $.each(data.data, function (i, item) {
-                    illerList.push(item)
-                });
-            }
-        });
-    });
+
 var ilselect = $('#cbiller').val();
 $('#cbiller').on('change', function () {
     const value = ilselect;
@@ -187,55 +200,47 @@ $('#cbiller').on('change', function () {
     document.getElementById("bolge").value = sehir.bolge;
     document.getElementById("merkezNoktasi").value = sehir.nokta;
     _panel.headerTitle = il;
-
-
 })
-
-function selectValue(value) {
-   
+ function wktSil () {
+     var il = document.getElementById("il").value;
+     const kayit = _liste.find(x => x.il == il);
+     Swal.fire({
+         title: 'Are you sure?',
+         text: "You won't be able to revert this!",
+         icon: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Yes, delete it!'
+     }).then((result) => {
+         if (result.isConfirmed) {
+             $.ajax({
+                 url: 'Home/SehirDetaySil',
+                 data: {
+                     "id": kayit.id
+                 },
+                 type: 'DELETE',
+                 dataType: 'json',
+                 success: function (data) {
+                     _panel.close();
+                     Listele();
+                 }
+             });
+             Swal.fire(
+                 'Deleted!',
+                 'Your file has been deleted.',
+                 'success'
+             )
+         }
+     })
 }
-$('#wktSil').on('click', function () {
-    var id = document.getElementById("tuikilkodu").value;
-    $.ajax({
-        url: 'Home/SehirDetaySil',
-        data: {
-            "id": id
-        },
-        // contentType: "application/json; charset=utf-8",
-        type: 'DELETE',
-        dataType: 'json',
-        success: function (data) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    _panel.close()
-                    Listele()
-                    Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                    )
-                }
-            })
-
-        }
-    });
-})
-$('#wktKaydet').on('click', function () {
+ function wktKaydet() {
     var tuik = document.getElementById("tuikilkodu").value;
     var il = document.getElementById("il").value;
     var nufus = document.getElementById("nufus").value;
     var bolge = document.getElementById("bolge").value;
     var nokta = document.getElementById("merkezNoktasi").value;
     var data = { tuikilkodu: tuik, il: il, nufus: nufus, bolge: bolge, merkezNoktasi: nokta };
-
     $.ajax({
         url: 'Home/SehirDetayKaydet',
         data: data,
@@ -250,44 +255,56 @@ $('#wktKaydet').on('click', function () {
                 showConfirmButton: false,
                 timer: 1500
             })
-
-
         }
     });
-})
-$('#wktTemizle').on('click', function () {
-
+}
+ function wktTemizle() {
     _map.removeLayer(_vector2);
-})
-
+}
 let cbhandler = function (event) {
-
     let len = _liste.length;
     _liste.splice(0, len);
-
 }
-
 document.addEventListener('jspanelclosed', cbhandler, false);
-
 let loadhandler = function (event) {
+    //setTimeout(function (){
+    //    $(function () {
+    //        var drp = document.getElementById("cbiller");
+    //        _liste.forEach(x => {
+    //            var optn = document.createElement("OPTION");
+    //            optn.text = x.il;
+    //            optn.value = x.tuik;
+    //            drp.options.add(new Option(optn.text, optn.value));
+    //        });
 
-    $("#cbiller").ready(function () {
-        console.log('hh')
+    //        $('#cbiller').on('change', function (event) {
+    //            var sehir = _liste.find(x => x.tuik == event.target.value);
+
+    //            // illerList.find(x => x.plaka_kodu == sehir.tuik);
+    //            document.getElementById("tuikilkodu").value = sehir.tuik;
+    //            var il = document.getElementById("il").value = sehir.il;
+    //            document.getElementById("nufus").value = sehir.nufus;
+    //            document.getElementById("bolge").value = sehir.bolge;
+    //            document.getElementById("merkezNoktasi").value = sehir.nokta;
+    //            _panel.headerTitle = il;
+    //        })
+    //    })
+    //}, 2000);
+}
+// assign handler to event
+document.addEventListener('jspanelloaded', loadhandler, false);
+function cbillerListele() {
+    $(function () {
         var drp = document.getElementById("cbiller");
-        console.log(drp);
-
         _liste.forEach(x => {
             var optn = document.createElement("OPTION");
             optn.text = x.il;
             optn.value = x.tuik;
             drp.options.add(new Option(optn.text, optn.value));
         });
-
         $('#cbiller').on('change', function (event) {
-            console.log(event);
-            const value = ilselect;
             var sehir = _liste.find(x => x.tuik == event.target.value);
-            console
+
             // illerList.find(x => x.plaka_kodu == sehir.tuik);
             document.getElementById("tuikilkodu").value = sehir.tuik;
             var il = document.getElementById("il").value = sehir.il;
@@ -295,45 +312,6 @@ let loadhandler = function (event) {
             document.getElementById("bolge").value = sehir.bolge;
             document.getElementById("merkezNoktasi").value = sehir.nokta;
             _panel.headerTitle = il;
-
-
         })
-    });
-
-    //setTimeout(
-    //    function () {
-    //        $(function () {
-    //            console.log('hh')
-    //            var drp = document.getElementById("cbiller");
-    //            console.log(drp);
-
-    //            _liste.forEach(x => {
-    //                var optn = document.createElement("OPTION");
-    //                optn.text = x.il;
-    //                optn.value = x.tuik;
-    //                drp.options.add(new Option(optn.text, optn.value));
-    //            });
-
-    //            $('#cbiller').on('change', function (event) {
-    //                console.log(event);
-    //                const value = ilselect;
-    //                var sehir = _liste.find(x => x.tuik == event.target.value);
-    //                console
-    //               // illerList.find(x => x.plaka_kodu == sehir.tuik);
-    //                document.getElementById("tuikilkodu").value = sehir.tuik;
-    //                var il = document.getElementById("il").value = sehir.il;
-    //                document.getElementById("nufus").value = sehir.nufus;
-    //                document.getElementById("bolge").value = sehir.bolge;
-    //                document.getElementById("merkezNoktasi").value = sehir.nokta;
-    //                _panel.headerTitle = il;
-
-
-    //            })
-    //        })
-    //    }, 2000);
-    console.log('load');
-    //drp.options.add(new Option(optn.text, optn.value));
+    })
 }
-
-// assign handler to event
-document.addEventListener('jspanelloaded', loadhandler, false);

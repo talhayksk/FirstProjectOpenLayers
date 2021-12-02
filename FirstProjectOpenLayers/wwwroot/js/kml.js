@@ -1,15 +1,18 @@
-var _panel, _panelx, _file = 'ILLER.KML', _map, _activeLayer;
+var _panel, _panelx, _map, _activeLayer;
 var _layers = [];
 var raster = new ol.layer.Tile({
+ 
     source: new ol.source.XYZ({
         url: "http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+        ,
+        wrapX: false
     })
 });
 $('#kmlYukle').on('click', function () {
 
     (async () => {
         const { value: file } = await Swal.fire({
-            title: 'Select Kml',
+            title: 'Kml Dosyasi Sec',
             input: 'file',
 
             inputAttributes: {
@@ -21,7 +24,7 @@ $('#kmlYukle').on('click', function () {
         console.log(file);
         //todo kml kullanýcadan okunacak sunucuya atýlmayacak
         if (file) {
-            _file = file.name;
+            var url;
             let formData = new FormData();
             formData.append("file", file);
             await fetch('Home/SaveFile/', {
@@ -31,7 +34,8 @@ $('#kmlYukle').on('click', function () {
 
             var layer = new ol.layer.Vector({
                 source: new ol.source.Vector({
-                    url: 'Files/' + _file,
+                   url: 'Files/' + file.name,
+                   // url: url,
                     format: new ol.format.KML(),
                     projection: 'EPSG:3857',
                 }),
@@ -85,25 +89,15 @@ _map.on('click', function (evt) {
         _activeLayer = _map.getLayers();
     });
 });
-
-
-
-
 var format = new ol.format.GeoJSON();
 var json = [], layers = [];
 var geometryK;
 const x = 0;
 const y = 0;
 var secilenler = [];
-
-
 var drawend = function (event) {
-
-    //draw.setActive(false)
     var features;// = [kml_layer.getSource().getFeatures()];
     features = [event.feature]
-
-    //  var features = kml_layer.features;
     var geometry = event.feature.getGeometry();
     var type = geometry.getType();
 
@@ -135,7 +129,7 @@ var drawend = function (event) {
                     if (intersects == true) {
                         //var h = $('<textarea />').html(text).text();
                         try {
-                            plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(k.values_.description)[1];
+                            plateNumber = /<span class="atr-value">(\d+)<\/span>/mg.exec(k.getProperties().description)[1];
                         } catch (e) {
                             plateNumber = "YOK";
                         }
@@ -148,8 +142,6 @@ var drawend = function (event) {
                 })
             }
         }
-
-
         $(function () {
             $('#table').bootstrapTable({ data: secilenler, locale: 'tr', pagination: true })
 
@@ -173,6 +165,10 @@ var drawend = function (event) {
 
             callback: function () {
                 this.content.style.padding = '20px';
+            },
+            onclosed: function (panel, closedByUser) {
+                let len = secilenler.length;
+                secilenler.splice(0, len);
             }
         });
         switch (typeSelect) {
@@ -192,8 +188,6 @@ var drawend = function (event) {
             // code block
         }
     }
-
-
 };
 var illerDetayListJson = [];
 function sehirDetay(idx) {
@@ -237,6 +231,8 @@ function bilgiAl(id, name, tuikKodu) {
                 _panelx.content.innerHTML = xhr.responseText;
                 document.getElementById('il').value = name;
                 document.getElementById('tuikkodu').value = tuikKodu;
+                $('#kopyala').click(function () { kaydet(); });
+
             }
         },
         callback: function () {
@@ -245,15 +241,11 @@ function bilgiAl(id, name, tuikKodu) {
     });
 }
 var _wkt;
-
 function kaydet() {
     var tuik = document.getElementById("tuikkodu").value;
     var sehir = secilenler.find(x => x.desc == tuik);
     var wktfetures = sehir.obj;
-
     const wktformat = new ol.format.WKT();
-
-
     var plateNumber;
     var geo = wktfetures.getGeometry();
     try {
@@ -272,12 +264,12 @@ function kaydet() {
     }
     var il = document.getElementById("il").value;
     //----
-    var iljson = illerDetayListJson.find(x => x.plaka_kodu == tuik);
+    var iljson = illerDetayListJson.find(x => x.il_adi == il);
     var nufus = iljson.nufus;
     var bolge = iljson.bolge;
     var nokta = _wkt;//document.getElementById("merkezNoktasi").value = sehir.nokta;
     //-----
-    var sehir = { id: '', il: il, tuikilkodu: tuik, bolge: bolge, nufus: nufus, merkezNoktasi: nokta }
+    var sehir = {id:1,il: il, tuikilkodu: tuik, bolge: bolge, nufus: nufus, merkezNoktasi: nokta }
     $.ajax({
         url: 'Home/SehirKaydet',
         data: sehir,
@@ -310,7 +302,6 @@ $('#type').on('change', function () {
    // addInteraction();
 })
 var typeSelect = $('#type').val();
-
 function addInteraction() {
     if (typeSelect !== 'None') {
         if (typeSelect == 'Point') {
@@ -361,11 +352,3 @@ var cizBtn = document.getElementById("cizBtn");
 $('#cizBtn').on('click', function () {
       addInteraction();
 });
-let handler = function (event) {
-
-    let len = secilenler.length;
-    secilenler.splice(0, len);
-
-}
-
-document.addEventListener('jspanelclosed', handler, false);

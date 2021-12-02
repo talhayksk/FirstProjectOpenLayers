@@ -9,11 +9,11 @@ namespace FirstProjectOpenLayers.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+       
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController()
         {
-            _logger = logger;
+          
         }
 
         public IActionResult Index()
@@ -26,7 +26,7 @@ namespace FirstProjectOpenLayers.Controllers
             
             var store = new DataStore("Files/data.json");
             var ilCollection = store.GetCollection<SehirDetay>();
-            ilCollection.InsertOne(sehir);
+            ilCollection.InsertOneAsync(sehir);
 
             return Json(sehir);
 
@@ -41,13 +41,13 @@ namespace FirstProjectOpenLayers.Controllers
             string path = ("Files/data.json");
             var store = new DataStore(path);
             var ilCollection = store.GetCollection<SehirDetay>();
-            var kayit = ilCollection.AsQueryable().ToList().Where(p=>p.tuikilkodu==sehirDetay.tuikilkodu);
+            var kayit = ilCollection.AsQueryable().ToList().Where(p=>p.id==sehirDetay.id);
             if (kayit == null)
             {
                 ilCollection.InsertOne(sehirDetay);
             }
             else { 
-              var il = ilCollection.UpdateOne(x => x.tuikilkodu == sehirDetay.tuikilkodu,sehirDetay);
+              var il = ilCollection.UpdateOne(x => x.id == sehirDetay.id, sehirDetay);
             var illist = ilCollection.AsQueryable().ToList();
             }
           
@@ -61,11 +61,11 @@ namespace FirstProjectOpenLayers.Controllers
             string path = ("Files/data.json");
             var store = new DataStore(path);
             var ilCollection = store.GetCollection<SehirDetay>();
-            var il = ilCollection.DeleteOne(x=>x.tuikilkodu==id);
+            var il = ilCollection.DeleteOne(x=>x.id == id);
             var illist = ilCollection.AsQueryable().ToList();
             var stores = new DataStore("Files/Data.json");
            var datailcoll = stores.GetCollection<sehir>();
-            var datail = datailcoll.DeleteOne(x=>x.tuikilkodu==id);
+            var datail = datailcoll.DeleteOne(x=>x.id == id);
             return Json(illist);
 
         }
@@ -80,8 +80,7 @@ namespace FirstProjectOpenLayers.Controllers
       
         [HttpPost]
         public async Task<IActionResult> SaveFileAsync(IFormFile file) {
-            string savePath = "c:\\temp\\uploads\\";
-            if (file == null || file.Length == 0)
+              if (file == null || file.Length == 0)
                 return Content("file not selected");
 
             var path = Path.Combine(
@@ -97,34 +96,11 @@ namespace FirstProjectOpenLayers.Controllers
                    
 
         }
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+  
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-        public JsonResult SavePoint()
-        {
-            return Json("");
-        }
+  
+     
 
-        [HttpPost]
-        public JsonResult SavePoint(Kapi kapi, double x, double y, string no)
-        {
-
-            if (ModelState.IsValid)
-            {
-                kapi.KapiNo = no;
-                kapi.x = x;
-                kapi.y = y;
-                //db.Kapi.Add(kapi);
-                //db.SaveChanges();
-            }
-            return Json("");
-        }
+        
     }
 }
