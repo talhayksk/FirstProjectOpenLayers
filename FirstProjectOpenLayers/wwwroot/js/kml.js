@@ -147,7 +147,7 @@ var drawend = function (event) {
 
         })
         _panel = jsPanel.create({
-            id: "panel",
+            //id: "panel",
             theme: 'success',
             headerTitle: 'Secilen iller',
             position: 'center-top 10 58',
@@ -219,7 +219,7 @@ function selectValue(value) {
 function bilgiAl(id, name, tuikKodu) {
    // console.log(title);
     _panelx = jsPanel.create({
-        id: "panelx",
+        //id: "panelx",
         theme: 'success',
         headerTitle: id,
         position: 'center-top 0 150',
@@ -243,10 +243,11 @@ function bilgiAl(id, name, tuikKodu) {
 var _wkt;
 function kaydet() {
     var tuik = document.getElementById("tuikkodu").value;
-    var sehir = secilenler.find(x => x.desc == tuik);
+    var sehir = secilenler.find(x => x.id == _panelx.titlebar.innerText);
     var wktfetures = sehir.obj;
     const wktformat = new ol.format.WKT();
     var plateNumber;
+
     var geo = wktfetures.getGeometry();
     try {
         plateNumber = tuik;
@@ -254,7 +255,13 @@ function kaydet() {
         plateNumber = "Yok"
     }
     if (plateNumber == tuik) {
-        var count = geo.getGeometries();
+        var count;
+        try {
+            count = geo.getGeometries();
+        } catch (e) {
+            count = geo;
+            _wkt = wktformat.writeGeometry(geo);
+        }
         for (let i = 0; i < count.length; i++) {
             if (geo.getGeometries()[i].getType() == 'Polygon') {
                 console.log(geo.getGeometries()[i])
@@ -265,8 +272,15 @@ function kaydet() {
     var il = document.getElementById("il").value;
     //----
     var iljson = illerDetayListJson.find(x => x.il_adi == il);
-    var nufus = iljson.nufus;
-    var bolge = iljson.bolge;
+    var nufus="bilinmiyor";
+    var bolge="bilinmiyor";
+    if (iljson != undefined) {
+        nufus= iljson.nufus;
+        bolge = iljson.bolge;
+    //-----
+    }
+    //var nufus = iljson.nufus;
+    //var bolge = iljson.bolge;
     var nokta = _wkt;//document.getElementById("merkezNoktasi").value = sehir.nokta;
     //-----
     var sehir = {id:1,il: il, tuikilkodu: tuik, bolge: bolge, nufus: nufus, merkezNoktasi: nokta }

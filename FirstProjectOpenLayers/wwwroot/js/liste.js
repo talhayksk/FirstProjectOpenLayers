@@ -4,8 +4,114 @@ var illerList = [];
 var _wkt;
 var cityOptions = [];
 $('#listele').on('click', function () {
-    Listele();
+    function actionFormatter() {
+        return '<button class="btn btn-secondary">Click</>'
+    }
+    _panel = jsPanel.create({
+        // id: "panel",
+        theme: 'success',
+        headerTitle: 'Sehirler',
+        position: 'center-top 10 58',
+        panelSize: {
+            width: () => { return Math.min(900, window.innerWidth * 0.9); },
+            height: () => { return Math.min(600, window.innerHeight * 0.6); }
+        },
+    
+        contentAjax: {
+            method: 'POST',
+            url: 'home/Listele',
+            data: "json", // note that data type is set with setRequestHeader()
+            done: function (xhr, panel) {
+                panel.content.innerHTML = xhr.responseText;
+            },
+            beforeSend: function () {
+                this.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            }
+        },
+        callback: function () {
+            this.content.style.padding = '20px';
+        }
+    });
+
+    $.ajax({
+        url: 'Home/GetListe',
+        contentType: "application/json; charset=utf-8",
+        
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+
+            data.forEach(item => {
+                _liste.push({
+                    id: item.id, il: item.il, tuik: item.tuikilkodu, nokta: item.merkezNoktasi, bolge: item.bolge, nufus: item.nufus
+                });
+            })
+            $('#tableListe').bootstrapTable({
+                data: _liste,
+                locale: 'tr',
+                pagination: true,
+                format: actionFormatter,
+            })
+
+        }
+    })
+   //Listele();
 })
+window.actionEvents = {
+    'click .btn': function (e, value, row, index) {
+//        alert(row.id)
+        $.ajax({
+            url: 'Home/GetListe',
+           // data: 'row.id',
+            // contentType: "application/json; charset=utf-8",
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var sehir = data.find(x => x.id == row.id);
+                _panel = jsPanel.create({
+                    id: 'panel'+row.id,
+                    theme: 'success',
+                    headerTitle: 'Detay',
+                    position: 'center-top 10 58',
+                    panelSize: {
+                        width: () => { return Math.min(600, window.innerWidth * 0.9); },
+                        height: () => { return Math.min(500, window.innerHeight * 0.6); }
+                    },
+                    contentAjax: {
+                        method: 'POST',
+                        url: 'home/SehirDetay',
+                        data: "json", // note that data type is set with setRequestHeader()
+                        done: function (xhr, panel) {
+                            panel.content.innerHTML = xhr.responseText;
+                            document.getElementById("tuikilkodu").value = sehir.tuikilkodu;
+                            $('#tuikilkodu', panel).val(sehir.tuikilkodu);
+                            var il = document.getElementById("il").value = sehir.il;
+                            document.getElementById("nufus").value = sehir.nufus;
+                            document.getElementById("bolge").value = sehir.bolge;
+                            document.getElementById("merkezNoktasi").value = sehir.merkezNoktasi;
+                            _panel.headerTitle = il;
+                        },
+                        beforeSend: function () {
+                            this.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                        }
+                    },
+                    callback: function () {
+                        this.content.style.padding = '20px';
+                    }
+                });
+             
+            }
+        });
+  
+          
+        
+         //Listele();
+    }
+}
+function SehirDetay() {
+
+
+}
 function Listele() {
     $("#cbiller").empty();
     $.ajax({
@@ -53,10 +159,10 @@ function Listele() {
                     _panel.headerTitle = il;
                 })
             })
-            var id = $('#cbiller').val();
+            //var id = $('#cbiller').val();
 
             _panel = jsPanel.create({
-                id: "panel",
+               // id: "panel",
                 theme: 'success',
                 headerTitle: 'Secilen iller',
                 position: 'center-top 10 58',
@@ -65,10 +171,14 @@ function Listele() {
                     height: () => { return Math.min(500, window.innerHeight * 0.6); }
                 },
                 contentAjax: {
-                    url: 'Files/SehirListe.html',
-                    done: (xhr, panel) => {
-                        _panel.content.innerHTML = xhr.responseText;
-                        //Prism.highlightAll();
+                    method: 'POST',
+                    url: 'home/Listele',
+                    data: "json", // note that data type is set with setRequestHeader()
+                    done: function (xhr, panel) {
+                        panel.content.innerHTML = xhr.responseText;
+                    },
+                    beforeSend: function () {
+                        this.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     }
                 },
                 callback: function () {

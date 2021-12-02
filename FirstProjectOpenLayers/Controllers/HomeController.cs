@@ -50,9 +50,6 @@ namespace FirstProjectOpenLayers.Controllers
               var il = ilCollection.UpdateOne(x => x.id == sehirDetay.id, sehirDetay);
             var illist = ilCollection.AsQueryable().ToList();
             }
-          
-
-
             return Json(null);
         }
         [HttpDelete]
@@ -77,7 +74,16 @@ namespace FirstProjectOpenLayers.Controllers
             var il = ilCollection.AsQueryable().ToList();
             return Json(il);
         }
-      
+        [HttpPost]
+        public JsonResult GetListItem(string id)
+        {
+            string path = ("Files/data.json");
+            var store = new DataStore(path);
+            var ilCollection = store.GetCollection<SehirDetay>();
+            var il = ilCollection.Find(id).ToList();
+            return Json(il);
+        }
+
         [HttpPost]
         public async Task<IActionResult> SaveFileAsync(IFormFile file) {
               if (file == null || file.Length == 0)
@@ -96,11 +102,32 @@ namespace FirstProjectOpenLayers.Controllers
                    
 
         }
-  
+        [HttpPost]
+        public IActionResult Listele() {
 
-  
-     
+            return Index();
+        }
+        [HttpPost]
+        public IActionResult SecilenlerListesi()
+        {
 
-        
+            return Index();
+        }
+        [HttpPost]
+        public IActionResult SehirDetay()
+        {
+
+            return Index();
+        }
+        //[HttpPost]
+        //public IActionResult Listele()
+        //{
+
+        //    return Index();
+        //}
+
+
+
+
     }
 }
