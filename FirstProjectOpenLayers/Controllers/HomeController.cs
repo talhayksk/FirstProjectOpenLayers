@@ -119,6 +119,7 @@ namespace FirstProjectOpenLayers.Controllers
 
             return Index();
         }
+
         //[HttpPost]
         //public IActionResult Listele()
         //{
